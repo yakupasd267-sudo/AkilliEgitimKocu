@@ -1,0 +1,30 @@
+name: iOS IPA Derleme
+
+on:
+  push:
+    branches: [ main ] # Kodları main dalına attığınızda tetiklenir
+
+jobs:
+  build:
+    runs-on: macos-latest # GitHub'ın bize sunduğu ÜCRETSİZ Mac bilgisayar
+
+    steps:
+    - name: Kodları Çek
+      uses: actions/checkout@v3
+
+    - name: Flutter Kurulumu
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+
+    - name: Bağımlılıkları Yükle
+      run: flutter pub get
+
+    - name: IPA Dosyasını Derle (Sertifikasız/Ad-Hoc)
+      run: flutter build ipa --no-codesign
+
+    - name: IPA Dosyasını Windows İçin Paketle
+      uses: actions/upload-artifact@v4
+      with:
+        name: iOS-Uygulamam
+        path: build/ios/ipa/*.ipa
